@@ -757,41 +757,6 @@ class singleton_service {
 
         return $instance->entities[$id] ?: new stdClass();
     }
-    /**
-     * We store the options of the customfield.
-     *
-     * @param int $fieldid
-     *
-     * @return array
-     *
-     */
-    public static function get_customfields_select_options(int $fieldid): array {
-
-        global $DB;
-
-        $customfields = [];
-        $instance = self::get_instance();
-
-        if (!isset($instance->customfields[$fieldid])) {
-            $field = $DB->get_record('customfield_field', ['id' => $fieldid], 'configdata');
-            $configdata = json_decode($field->configdata, true);
-
-            $options = $configdata['options'];
-            $optionlist = explode("\n", $options);
-            $counter = 1;
-
-            foreach ($optionlist as $option) {
-                $option =
-
-                $customfields[$counter] = trim($option);
-                $counter++;
-            }
-
-            $instance->customfields[$fieldid] = $customfields;
-        }
-
-        return $instance->customfields[$fieldid];
-    }
 
     /**
      * Returns ascending index for userids.
@@ -859,12 +824,11 @@ class singleton_service {
     }
 
     /**
-     * [Description for get_customfield_field_by_shortname]
+     * Get a booking option custom field by its shortname.
      *
      * @param string $field
      *
      * @return object
-     *
      */
     public static function get_customfield_field_by_shortname(string $field) {
         $instance = self::get_instance();
@@ -872,7 +836,14 @@ class singleton_service {
         if (!isset($instance->customfieldbyshortname[$field])) {
             global $DB;
 
-            $record = $DB->get_record('customfield_field', ['shortname' => $field]);
+            $sql = "SELECT cf.*
+                    FROM {customfield_field} cf
+                    JOIN {customfield_category} cc ON cf.categoryid = cc.id
+                    WHERE cf.shortname = :shortname
+                    AND cc.component = 'mod_booking'
+                    AND cc.area = 'booking'";
+
+            $record = $DB->get_record_sql($sql, ['shortname' => $field]);
 
             $instance->customfieldbyshortname[$field] = $record;
         }

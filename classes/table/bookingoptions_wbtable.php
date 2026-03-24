@@ -61,10 +61,47 @@ defined('MOODLE_INTERNAL') || die();
  * Class to handle search results for managers are shown in a table.
  *
  * @package mod_booking
- * @copyright 2023 Wunderbyte GmbH
+ * @copyright 2026 Wunderbyte GmbH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class bookingoptions_wbtable extends wunderbyte_table {
+    /** @var string component for customfields */
+    public $customfieldcomponent = 'mod_booking';
+
+    /** @var string area used for customfields */
+    public $customfieldarea = 'booking';
+
+    /**
+     * Customfield columns.
+     * @var array
+     */
+    public $customfieldsinfoarray = [];
+
+    /**
+     * Store additional columns information.
+     * Structure:
+     * keys => shortname of the column or customfield
+     * values => array of arrays with keys:
+     *    'colname' => shortname of the column or customfield,
+     *    'class' => classes for the column, e.g. "text-center",
+     *    'region' => region where the column should be displayed, e.g. "cardbody",
+     *    'iconclass' => iconclass of the icon, e.g. "far fa-wrench",
+     *
+     * @param array $customfieldsinfoarray array of customfield column information
+     */
+    public function set_customfields_info_array(array $customfieldsinfoarray = []): void {
+        $this->customfieldsinfoarray = $customfieldsinfoarray;
+    }
+
+    /**
+     * Get additional customfield columns information.
+     *
+     * @return array of customfield column information
+     */
+    public function get_customfields_info_array(): array {
+        return $this->customfieldsinfoarray ?? [];
+    }
+
     /**
      * This function is called for each data row to allow processing of the
      * invisible value. It's called 'invisibleoption' so it does not interfere with
@@ -1608,5 +1645,27 @@ class bookingoptions_wbtable extends wunderbyte_table {
             return ($completion === null) ? '' : '| ' . $completion . get_string('postprogressstring', 'mod_booking');
         }
         return '';
+    }
+
+    /**
+     * This function is called for each data row to allow processing of columns which do not have a *_cols function.
+     * @param mixed $colname
+     * @param mixed $values
+     * @return mixed
+     */
+    public function other_cols($colname, $values) {
+        // Show the values of customfields if they have been added as column.
+        $settings = singleton_service::get_instance_of_booking_option_settings($values->id);
+        if (isset($settings->customfieldsfortemplates[$colname]['value'])) {
+            if (
+                is_string($settings->customfieldsfortemplates[$colname]['value'])
+                || is_numeric($settings->customfieldsfortemplates[$colname]['value'])
+            ) {
+                return $settings->customfieldsfortemplates[$colname]['value'];
+            } else if (is_array($settings->customfieldsfortemplates[$colname]['value'])) {
+                return implode(', ', $settings->customfieldsfortemplates[$colname]['value']);
+            }
+        }
+        return $values->$colname ?? '';
     }
 }

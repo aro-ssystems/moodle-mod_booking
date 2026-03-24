@@ -919,6 +919,10 @@ $string['completionchangedhistory'] = 'The completion status was changed from "{
 $string['completionmodule'] = 'Upon completion of the selected course activity, enable bulk deletion of user bookings';
 $string['completionmodule_help'] = 'Display bulk deletion button for booking answers, if another course module has been completed. The bookings of users will be deleted with a click of a button on the report page! Only activities with completion enabled can be selected from the list.';
 $string['completionoptioncompletedcminfo'] = 'Get marked as completed in at least {$a} booking options (by teacher, manager or admin).';
+$string['condition:cohort'] = 'Cohort';
+$string['condition:profilefieldcurrentuser'] = 'Current user';
+$string['condition:supervisor'] = 'Supervisor is current user';
+$string['condition:withinpastxyears'] = 'Is within the past X years';
 $string['conditionselectbookingmanager'] = 'Select booking manager.';
 $string['conditionselectbookingmanager_desc'] = 'Booking manager as definied in the settings of the module booking instance.';
 $string['conditionselectresponsiblecontactinbo_desc'] = 'Select responsible contact(s) of the booking option.';
@@ -933,9 +937,7 @@ $string['conditionsoverwritingbillboard'] = 'Overwrite messages about blocking r
 $string['conditionsoverwritingbillboard_desc'] = 'A text can be entered in the settings of the booking instance that is displayed instead of other messages on blocking reasons of bookings.';
 $string['conditionssettings'] = 'Availability conditions settings';
 $string['conditionssettings_desc'] = 'You can opt out of certain conditions if they are not needed. This will give you a performance boost, since the system will not check these conditions anymore during the booking process.';
-$string['conditionsskippedwarning'] = '<div class="alert alert-info" role="alert">
-    This condition can not be selected, since it was skipped in the settings.
-    </div>';
+$string['conditionsskippedwarning'] = '<div class="alert alert-warning" role="alert">This condition can not be selected because it was <a href="{$a}" target="_blank">turned off (skipped) in the settings</a>.</div>';
 $string['conditiontextfield'] = 'Value';
 $string['configurefields'] = 'Configure fields and columns';
 $string['confirmactivtyfrom'] = 'Confirm users activity from';
@@ -1088,6 +1090,8 @@ $string['customuserprofilefield_help'] = "If you choose a value here, the price 
 $string['dashboardsummary'] = 'General';
 $string['dashboardsummary_desc'] = 'Contains the settings and stats for the whole Moodle site';
 $string['dataincomplete'] = 'Record with componentid {$a->id} is incomplete and could not be treated entirely. Check field "{$a->field}".';
+$string['datasource:bookinganswers'] = 'Booking answers';
+$string['datasource:bookingoptions'] = 'Booking options';
 $string['dateandtime'] = 'Date and time';
 $string['dateerror'] = 'Wrong date in line {$a}: ';
 $string['datenotset'] = 'Date not set';
@@ -1275,6 +1279,7 @@ $string['electivesbookedsuccess'] = 'Your selected electives have been booked su
 $string['electivesettings'] = 'Elective Settings';
 $string['email'] = "Email";
 $string['emailbody'] = 'Email body';
+$string['emailrelated'] = 'E-mail address of related person (like i.e. the user the booking was made for)';
 $string['emailsettings'] = 'E-mail settings <span class="badge bg-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Deprecated</span>';
 $string['enable'] = 'Enable';
 $string['enablecompletionmincompleted'] = 'Min. number of completed booking options';
@@ -1324,6 +1329,8 @@ $string['enteruserprofilefield'] = "Select users by entering a value for custom 
 $string['entervalidurl'] = 'Please, enter a valid URL!';
 $string['entities'] = 'Choose places with entities plugin';
 $string['entitiesfieldname'] = 'Place(s)';
+$string['entitybookinganswer'] = 'Booking answer';
+$string['entitybookingoption'] = 'Booking option';
 $string['entitydeleted'] = 'Location has been deleted';
 $string['equals'] = 'has exactly this value (text or number)';
 $string['equalsnot'] = 'has not exactly this value (text or number)';
@@ -1449,6 +1456,8 @@ $string['fieldofstudyoptions'] = "Shortcode to show all booking options of a fie
  They are defined by a common cohort sync enrolement & the booking availabilty condition of
  having to be inscribed in one of these courses.";
 $string['fillinatleastoneoption'] = 'You need to provide at least two possible answers.';
+$string['filter:completeddateyears'] = 'Completed date (past X years)';
+$string['filter:timemodifiedyears'] = 'Time modified (past X years)';
 $string['filteravailalbetobook'] = 'Available to book';
 $string['filterbookingavailability'] = 'Booking availability';
 $string['filterbtn'] = 'Filter';
@@ -1498,6 +1507,7 @@ $string['gotomoodlecourse'] = 'Go to Moodle course';
 $string['groupdeleted'] = 'This booking instance creates groups automatically in the target course. But the group has been manually deleted in the target course. Activate the following checkbox in order to recreate the group';
 $string['groupexists'] = 'The group already exists in the target course, please choose another name for the booking option';
 $string['groupid'] = 'Group';
+$string['groupiddisplay'] = 'Group';
 $string['groupiddisplay_help'] = '<i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp;Upon booking, users are automatically enrolled into this course group<span class="text-small"></span>';
 $string['groupname'] = 'Group name';
 $string['h'] = '';
@@ -1804,6 +1814,7 @@ $string['nocancelreason'] = "You need to give a reason for canceling this bookin
 $string['nocfnameselected'] = "Nothing selected. Either type new name or select one from the list.";
 $string['nocmidselected'] = 'No cmid was selected';
 $string['nocomments'] = 'Commenting disabled';
+$string['noconditionselected'] = 'No condition selected';
 $string['noconfirmationworkflow'] = 'No confirmtion necessary';
 $string['nocourse'] = 'No course selected for this booking option';
 $string['nocourseselected'] = 'No course selected';
@@ -2205,7 +2216,8 @@ $string['problemsofcohortorgroupbooking'] = '<br><p>Not all users could be booke
 <ul>
 <li>{$a->notenrolledusers} users are not enrolled in the course</li>
 <li>{$a->notsubscribedusers} users not booked for other reasons</li>
-</ul>';
+</ul>
+<p>The reason is probably that the users to be booked are not enrolled in this course and you do not have the mod/booking:bookanyone capability</p>';
 $string['problemwithdate'] = 'Please verify dates';
 $string['profeatures:appearance'] = '<ul>
 <li><b>hide Wunderbyte logo and link</b></li>
@@ -2714,7 +2726,7 @@ $string['signinsheetmode_desc'] = 'Select the mode for downloading the sign-in s
 $string['signinsheettoporientation'] = 'Sign-in Sheet Top-Button Orientation';
 $string['signinsheettoporientationdesc'] = 'Orientation Top PDF download button';
 $string['signinsheettoporientationdesc_help'] = 'Sets the default orientation for the sign-in sheet top download button. Choose between Portrait and Landscape.';
-$string['skipableconditions'] = 'Skippable conditions';
+$string['skipableconditions'] = 'Turn off specific availability conditions';
 $string['skipableconditions_desc'] = 'Select which availability conditions should be skipped during the booking process.';
 $string['skipbookingrulesmode'] = 'Apply booking rules';
 $string['skipbookingrulesoptin'] = 'Opt in: Only apply the following rules';

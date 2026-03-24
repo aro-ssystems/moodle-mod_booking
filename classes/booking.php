@@ -200,12 +200,15 @@ class booking {
             '\' \''
         );
 
+        // We do not load any deleted, suspended or unconfirmed users.
         $sql = "SELECT * FROM (
                     SELECT u.id, u.firstname, u.lastname, u.email, $fullsql AS fulltextstring
-                    FROM {user} u
-                    WHERE u.deleted = 0
+                      FROM {user} u
+                     WHERE u.deleted = 0
+                       AND u.suspended = 0
+                       AND u.confirmed = 1
                 ) AS fulltexttable";
-        // Check for u.deleted = 0 is important, so we do not load any deleted users!
+
         $params = [];
         if (!empty($query)) {
             // We search for every word extra to get better results.
@@ -1417,71 +1420,6 @@ class booking {
     }
 
     /**
-     * Genereate SQL and params array to fetch my options.
-     *
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @param string $searchtext
-     * @param string $fields
-     * @param array $booked
-     * @return array
-     */
-    public function get_my_options_sql(
-        $limitfrom = 0,
-        $limitnum = 0,
-        $searchtext = '',
-        $fields = "bo.*",
-        $booked = [MOD_BOOKING_STATUSPARAM_BOOKED]
-    ) {
-
-        global $DB, $USER;
-
-        $fields = "DISTINCT " . $fields;
-
-        $limit = '';
-        $rsearch = $this->searchparameters($searchtext);
-        $search = $rsearch['query'];
-        $params = array_merge(['bookingid' => $this->id,
-                                    'userid' => $USER->id,
-                                ], $rsearch['params']);
-
-        if ($limitnum != 0) {
-            $limit = " LIMIT {$limitfrom} OFFSET {$limitnum}";
-        }
-
-        [$inorequal, $inparams] = $DB->get_in_or_equal($booked, SQL_PARAMS_NAMED);
-
-        $params = array_merge($params, $inparams);
-
-        $from = "{booking_options} bo
-                JOIN {booking_answers} ba
-                ON ba.optionid=bo.id";
-        $where = "bo.bookingid = :bookingid
-                  AND ba.userid = :userid
-                  AND ba.waitinglist = $inorequal {$search}";
-        if (strlen($searchtext) !== 0) {
-            $from .= "
-                JOIN {customfield_data} cfd
-                ON bo.id=cfd.instanceid
-                JOIN {customfield_field} cff
-                ON cfd.fieldid=cff.id
-                ";
-            // Strip column close.
-            $where = substr($where, 0, -1);
-            // Add another tag.
-            $where .= " OR {$DB->sql_like('cfd.value', ':cfsearchtext', false)}) ";
-            // In a future iteration, we can add the specification in which customfield we want to search.
-            // For From JOIN {customfield_field} cff.
-            // ON cfd.fieldid=cff.id .
-            // And for Where.
-            // AND cff.name like 'fieldname'.
-            $params['cfsearchtext'] = $searchtext;
-        }
-
-        return [$fields, $from, $where, $params];
-    }
-
-    /**
      * Helper function to encode a moodle_url with base64.
      * This can be used in combination with bookingredirect.php.
      * @param object $moodleurl
@@ -1601,7 +1539,7 @@ class booking {
                 $optiontitle,
                 $record->coursestarttime,
                 $record->courseendtime,
-                1,
+                (int)($record->status ?? 0),
                 $link,
                 $bgcolor
             );
@@ -1630,11 +1568,12 @@ class booking {
                         'optiondate' area,
                         bo.id optionid,
                         bo.text,
+                        bo.status,
                         bod.coursestarttime,
                         bod.courseendtime
                     FROM {booking_optiondates} bod
                     JOIN (
-                        SELECT id, text
+                        SELECT id, text, status
                         FROM {booking_options}
                     ) bo
                     ON bod.optionid = bo.id
@@ -1645,6 +1584,7 @@ class booking {
                     'option' area,
                     id optionid,
                     text,
+                    status,
                     coursestarttime,
                     courseendtime
                     FROM {booking_options}

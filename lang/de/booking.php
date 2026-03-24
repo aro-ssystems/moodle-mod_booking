@@ -904,6 +904,8 @@ $string['completionchangedhistory'] = 'Der Abschluss wurde von "{$a->completiono
 $string['completionmodule'] = 'Aktiviere Massenlöschung von getätigten Buchungen basierend auf den Aktivitätsabschluss einer Kursaktivität';
 $string['completionmodule_help'] = 'Button zum Löschen aller Buchungen anzeigen, wenn eine andere Kursaktivität abgeschlossen wurde. Die Buchungen von Nutzer:innen werden mit einem Klick auf einen Button auf der Berichtsseite gelöscht! Nur Aktivitäten mit aktiviertem Abschluss können aus der Liste ausgewählt werden.';
 $string['completionoptioncompletedcminfo'] = 'In mind. {$a} Buchungsoptionen auf "Abgeschlossen" gesetzt werden (von Trainer:in, Kursersteller:in oder Manager:in).';
+$string['condition:supervisor'] = 'Vorgesetzter ist aktueller Benutzer';
+$string['condition:withinpastxyears'] = 'Liegt innerhalb der letzten X Jahre';
 $string['conditionselectbookingmanager'] = 'Verwalter:in der Buchungen wählen.';
 $string['conditionselectbookingmanager_desc'] = 'Verwalter:in der Buchungen wird in den Einstellungen der Buchungs Modul Instanz ausgewählt';
 $string['conditionselectresponsiblecontactinbo_desc'] = 'Kontaktperson(en) der von der Regel betroffenen Buchungsoption wählen.';
@@ -918,6 +920,7 @@ $string['conditionsoverwritingbillboard'] = 'Überschreiben von Nachrichten zur 
 $string['conditionsoverwritingbillboard_desc'] = 'In den Einstellungen der Buchungsinstanz kann ein Text eingegeben werden, der anstelle von anderen Nachrichten zur (Nicht-)Buchbarkeit angezeigt wird.';
 $string['conditionssettings'] = 'Verfügbarkeitsbedingungen';
 $string['conditionssettings_desc'] = 'Konfigurieren Sie die Verfügbarkeitsbedingungen für Buchungsoptionen.';
+$string['conditionsskippedwarning'] = '<div class="alert alert-warning" role="alert">Diese Bedingung kann nicht ausgewählt werden, da sie in den <a href="{$a}" target="_blank">Einstellungen deaktiviert (übersprungen) wurde</a>.</div>';
 $string['conditiontextfield'] = 'Wert';
 $string['configurefields'] = 'Spalten und Felder anpassen';
 $string['confirmationdeleted'] = 'Bestätigung gelöscht';
@@ -1062,6 +1065,8 @@ $string['customuserprofilefield_help'] = "Wenn Sie ein Benutzerdefiniertes User 
 $string['dashboardsummary'] = 'Allgemein';
 $string['dashboardsummary_desc'] = 'Enthält Konfiguration und Einstellungen für die gesamte Moodle Seite.';
 $string['dataincomplete'] = 'Der Datensatz mit "componentid" {$a->id} ist unvollständig und konnte nicht gänzlich eingefügt werden. Überprüfen Sie das Feld "{$a->field}".';
+$string['datasource:bookinganswers'] = 'Buchungsantworten';
+$string['datasource:bookingoptions'] = 'Buchungsoptionen';
 $string['dateandtime'] = 'Datum und Uhrzeit';
 $string['dateerror'] = 'Falsche Datumsangabe in Zeile {$a}: ';
 $string['datenotset'] = 'Datum nicht angegeben';
@@ -1243,6 +1248,7 @@ $string['electivesbookedsuccess'] = 'Ihre ausgewählten Wahlfächer wurden erfol
 $string['electivesettings'] = 'Wahlfach Einstellungen';
 $string['email'] = "E-Mail";
 $string['emailbody'] = 'E-Mail Text';
+$string['emailrelated'] = 'E-Mail-Adresse der betroffenen Person';
 $string['emailsettings'] = 'E-Mail-Einstellungen <span class="badge bg-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Veraltet</span>';
 $string['enable'] = 'Aktivieren';
 $string['enablecompletionmincompleted'] = 'Mindestanzahl an Buchungsoptionen, in denen der/die Nutzer:in auf "Abgeschlossen" gesetzt werden muss';
@@ -1290,6 +1296,8 @@ $string['enteruserprofilefield'] = "Wähle Nutzer:innen nach eingegebenem Wert f
 $string['entervalidurl'] = 'Bitte geben Sie eine gültige URL an!';
 $string['entities'] = 'Orte mit Entities Plugin auswählen';
 $string['entitiesfieldname'] = 'Ort(e)';
+$string['entitybookinganswer'] = 'Buchungsantwort';
+$string['entitybookingoption'] = 'Buchungsoption';
 $string['entitydeleted'] = 'Ort wurde gelöscht';
 $string['equals'] = 'hat genau diesen Wert (Text oder Zahl)';
 $string['equalsnot'] = 'hat nicht genau diesen Wert (Text oder Zahl)';
@@ -1417,6 +1425,8 @@ $string['fieldofstudyoptions'] = "Shortcode um alle Buchungsoptionen eines Studi
  Außerdem muss in der angezeigten Buchungsoption in der Buchungsvoraussetzung einer der betroffenen
  Kurse ausgewählt sein.";
 $string['fillinatleastoneoption'] = 'Geben Sie mindestens 2 mögliche Buchungen an.';
+$string['filter:completeddateyears'] = 'Abschlussdatum (letzte X Jahre)';
+$string['filter:timemodifiedyears'] = 'Änderungszeitpunkt (letzte X Jahre)';
 $string['filteravailalbetobook'] = 'Verfügbar zur Buchung';
 $string['filterbookingavailability'] = 'Buchungsverfügbarkeit';
 $string['filterbtn'] = 'Filtern';
@@ -1424,7 +1434,7 @@ $string['filterenddate'] = 'Bis';
 $string['filterfullybooked'] = 'Ausgebucht';
 $string['filterstartdate'] = 'Von';
 $string['firstname'] = "Vorname";
-$string['firstnamerelated'] = "Vorname betroffene Person";
+$string['firstnamerelated'] = "Vorname der betroffenen Person";
 $string['forcourse'] = 'für Kurs';
 $string['format'] = 'Format';
 $string['formconfig'] = 'Anzeige, welches Formular verwendet wird';
@@ -1466,6 +1476,7 @@ $string['gotomoodlecourse'] = 'Zum Moodle-Kurs';
 $string['groupdeleted'] = 'Diese Buchung erstellt automatisch Gruppen im Zielkurs. Aber die Gruppe wurde im Zielkurs manuell gelöscht. Aktivieren Sie folgende Checkbox, um die Gruppe erneut zu erstellen';
 $string['groupexists'] = 'Die Gruppe existiert bereits im Zielkurs. Bitte verwenden Sie einen anderen Namen für die Buchungsoption';
 $string['groupid'] = 'Gruppe';
+$string['groupiddisplay'] = 'Gruppe';
 $string['groupiddisplay_help'] = '<i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp;Bei Buchung werden Nutzer:innen automatisch in diese Kurs-Gruppe eingeschrieben<span class="text-small"></span>';
 $string['groupname'] = 'Gruppenname';
 $string['h'] = ' Uhr';
@@ -1583,7 +1594,7 @@ $string['keepusersbookedonreducingmaxanswers_desc'] = 'Benutzer:innen weiterhin 
 auch wenn das Limit der verfügbaren Plätze reduziert wird. Beispiel: Ein Kurs hat 5 Plätze.
 Das Limit wird auf 3 reduziert. Die 5 Nutzer:innen, die schon gebucht haben, bleiben trotzdem im Status "gebucht".';
 $string['lastname'] = "Nachname";
-$string['lastnamerelated'] = "Nachname betroffene Person";
+$string['lastnamerelated'] = "Nachname der betroffenen Person";
 $string['lblacceptingfrom'] = 'Bezeichnung für: Annehmen von';
 $string['lblbooking'] = 'Bezeichnung für: Buchung';
 $string['lblbooktootherbooking'] = 'Bezeichnung für den Button "Zu anderer Buchungsoption hinzufügen"';
@@ -1774,6 +1785,7 @@ $string['nocancelreason'] = "Sie müssen eine Grund für die Stornierung angeben
 $string['nocfnameselected'] = "Nichts ausgewählt. Tippen Sie einen neuen Namen oder wählen Sie einen aus der Liste.";
 $string['nocmidselected'] = 'Keine cmid wurde ausgewählt';
 $string['nocomments'] = 'Kommentare deaktiviert';
+$string['noconditionselected'] = 'Keine Bedingung ausgewählt';
 $string['noconfirmationworkflow'] = 'Keine Bestätigung erforderlich';
 $string['nocourse'] = 'Kein Kurs für Buchungsoption ausgewählt';
 $string['nocourseselected'] = 'Kein Kurs ausgewählt';
@@ -2095,7 +2107,8 @@ $string['problemsofcohortorgroupbooking'] = '<br><p>Es konnten nicht alle Buchun
 <ul>
 <li>{$a->notenrolledusers} Nutzer:innen sind nicht in den Kurs eingeschrieben</li>
 <li>{$a->notsubscribedusers} Nutzer:innen konnten aus anderen Gründen nicht gebucht werden</li>
-</ul>';
+</ul>
+<p>Der Grund ist wahrscheinlich, dass die zu Buchenden nicht in diesen Kurs eingeschrieben sind und Sie nicht das Recht mod_booking:bookanyone haben</p>';
 $string['problemwithdate'] = 'Bitte die Daten überprüfen';
 $string['profeatures:appearance'] = '<ul>
 <li><b>Wunderbyte Logo und Link ausblenden</b></li>
@@ -2594,7 +2607,7 @@ $string['signinsheetmode_desc'] = 'Wählen Sie den Modus für das Herunterladen 
 $string['signinsheettoporientation'] = 'Ausrichtung oberer Button-Unterschriftenliste';
 $string['signinsheettoporientationdesc'] = 'Orientierung PDF download oberer Button';
 $string['signinsheettoporientationdesc_help'] = 'Legt die Standardausrichtung für den oberen Download-Button der Unterschriftenliste fest. Wählen Sie zwischen Hochformat und Querformat.';
-$string['skipableconditions'] = 'Überspringbare Bedingungen';
+$string['skipableconditions'] = 'Bestimmte Verfügbarkeitsbedingungen ausschalten';
 $string['skipableconditions_desc'] = 'Wählen Sie aus, welche Verfügbarkeitsbedingungen während des Buchungsprozesses übersprungen werden sollen.';
 $string['skipbookingrulesmode'] = 'Anwendung der Buchungsregeln';
 $string['skipbookingrulesoptin'] = 'Opt in: Nur folgende Regeln anwenden';

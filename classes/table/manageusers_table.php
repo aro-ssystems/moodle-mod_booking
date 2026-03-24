@@ -24,10 +24,7 @@
  */
 
 namespace mod_booking\table;
-use local_wunderbyte_table\local\customfield\wbt_field_controller_info;
-use mod_booking\customfield\booking_handler;
 use mod_booking\local\certificateclass;
-use mod_booking\option\fields\certificate;
 use moodle_exception;
 use core_plugin_manager;
 use mod_booking\enrollink;
@@ -844,6 +841,7 @@ class manageusers_table extends wunderbyte_table {
                 $allowedtoconfirm
                 && $requiredconfirmations > $currentconfirmations
                 && $waitforconfirmation
+                && $ba->user_status($values->userid) != MOD_BOOKING_STATUSPARAM_BOOKED
         ) {
             $data[] = [
                 'arialabel' => get_string('actionbuttonconfirm', 'mod_booking'), // Name of your action button.

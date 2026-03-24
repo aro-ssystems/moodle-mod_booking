@@ -1199,6 +1199,7 @@ class booking_option {
      * @param int $verified 0 for unverified, 1 for pending and 2 for verified.
      * @param string $erlid the identifier of the enrollink, if given
      * @param int $timebooked the timestamp when the booking was made
+     * @param bool $updateansweronimport if set to true, the function will update existing bookinganswer on imports.
      * @return bool true if booking was possible, false if meanwhile the booking got full
      */
     public function user_submit_response(
@@ -1208,7 +1209,8 @@ class booking_option {
         $status = MOD_BOOKING_BO_SUBMIT_STATUS_DEFAULT,
         $verified = MOD_BOOKING_UNVERIFIED,
         $erlid = "",
-        $timebooked = 0
+        $timebooked = 0,
+        $updateansweronimport = false,
     ) {
 
         global $USER;
@@ -1303,9 +1305,10 @@ class booking_option {
                     // If we come from sync_waiting_list it might be possible that someone is moved from booked to waiting list.
                     // If we are already booked and multiple bookings is not enabled, we don't do anything.
                     if (
-                        $waitinglist == MOD_BOOKING_STATUSPARAM_BOOKED
+                        !$updateansweronimport
+                        && $waitinglist == MOD_BOOKING_STATUSPARAM_BOOKED
                         && (
-                            !$ismultipbookingsoptionenable
+                            !$ismultipbookingsoptionenable 
                             || $currentanswer->timemodified == $timebooked
                         )
                     ) {
@@ -2697,11 +2700,12 @@ class booking_option {
      *
      * @param int $userid
      * @param int $timebooked // Pass on a timestamp, if we import old data.
+     * @param bool $updateansweronimport  // Updates bookinganswer on import.
      *
      * @return bool
      *
      */
-    public function toggle_user_completion(int $userid, int $timebooked = 0) {
+    public function toggle_user_completion(int $userid, int $timebooked = 0, bool $updateansweronimport = false) {
         global $USER, $DB, $USER;
 
         $cmid = $this->cmid;
@@ -2725,7 +2729,8 @@ class booking_option {
                 if ($userdata) {
                     $userdata->baid = $userdata->id;
                     $userdata->id = $userdata->userid;
-                    if (!empty($userdata->completed)) {
+                    // If the User is already completed and we do not update the answer on import, we return false.
+                    if (empty($userdata->completed) && empty($updateansweronimport)) {
                         return false;
                     }
                 }
@@ -2739,8 +2744,14 @@ class booking_option {
                 );
             }
         }
-        $completionold = $userdata->completed;
-        $userdata->completed = empty($completionold) ? '1' : '0';
+        // If we update the answer on import we set it automatically to one.
+        // We can do this because we do not toggle completion if it isn't set to 1.
+        if (!empty($updateansweronimport)) {
+            $userdata->completed = '1';
+        } else {
+            $completionold = $userdata->completed;
+            $userdata->completed = empty($completionold) ? '1' : '0';
+        }
         $userdata->timemodified = empty($timebooked) ? time() : $timebooked;
         $completeddate = empty($userdata->completed) ? null : (empty($timebooked) ? time() : $timebooked);
 
@@ -3083,43 +3094,6 @@ class booking_option {
             self::update($newoption, $context);
             $firstrun = false;
         }
-    }
-
-    /**
-     * Central function to return a list of booking options with all possible filters applied.
-     * Default is a list of all booking options from the whole site.
-     *
-     * @param int $bookingid // Should be set.
-     * @param array $filters
-     * @param string $fields
-     * @param string $from
-     * @param string $where
-     * @param array $params
-     * @param string $order
-     *
-     * @return array
-     */
-    public static function search_all_options_sql(
-        $bookingid = 0,
-        $filters = [],
-        $fields = '*',
-        $from = '',
-        $where = '',
-        $params = [],
-        $order = 'ORDER BY bo.id ASC'
-    ): array {
-        $from = $from ?? '{booking_options} bo
-                        JOIN {customfield_data} cfd
-                        ON bo.id=cfd.instanceid
-                        JOIN {customfield_field} cff
-                        ON cfd.fieldid=cff.id';
-
-        // If there is no booking id, we look for all booking options.
-        if (isset($bookingid)) {
-            $where = $where ?? 'bookingid=:bookingid';
-            $params['bookingid'] = $bookingid;
-        }
-        return [$fields, $from, $where, $params, $order];
     }
 
     /**
@@ -4105,13 +4079,32 @@ class booking_option {
      * Function to lazyload a list of booking options for autocomplete.
      *
      * @param string $query
+     * @param int $bookingid Optional booking instance id filter
+     * @param int $cmid Optional course module id filter
      * @return array
      */
-    public static function load_booking_options(string $query) {
+    public static function load_booking_options(string $query, int $bookingid = 0, int $cmid = 0) {
 
         global $DB;
 
         $values = explode(' ', $query);
+        $params = [];
+
+        if (empty($bookingid) && !empty($cmid)) {
+            $cmparams = [
+                'cmid' => $cmid,
+                'modname' => 'booking',
+            ];
+            $bookingid = (int)$DB->get_field_sql(
+                "SELECT b.id
+                   FROM {booking} b
+                   JOIN {course_modules} cm ON cm.instance = b.id
+                   JOIN {modules} m ON m.id = cm.module
+                  WHERE cm.id = :cmid
+                    AND m.name = :modname",
+                $cmparams
+            );
+        }
 
         $fullsql = $DB->sql_concat(
             '\' \'',
@@ -4132,9 +4125,14 @@ class booking_option {
                     ON bo.bookingid = b.id
                 ) AS fulltexttable";
 
+        if (!empty($bookingid)) {
+            $sql .= " WHERE id IN (SELECT bo2.id FROM {booking_options} bo2 WHERE bo2.bookingid = :bookingidfilter) ";
+            $params['bookingidfilter'] = $bookingid;
+        }
+
         if (!empty($query)) {
             // We search for every word extra to get better results.
-            $firstrun = true;
+            $firstrun = empty($bookingid);
             $counter = 1;
             foreach ($values as $value) {
                 $sql .= $firstrun ? ' WHERE ' : ' AND ';
