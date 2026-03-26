@@ -5194,11 +5194,9 @@ function xmldb_booking_upgrade($oldversion) {
 
         // Booking savepoint reached.
         upgrade_mod_savepoint(true, 2026030500, 'booking');
-
-        return true;
     }
     // Add certificate conditions tables (pro feature).
-    if ($oldversion < 2026032000) {
+    if ($oldversion < 2026032600) {
         // If previous attempts created malformed tables we drop them first so the new
         // definition with proper primary key/auto column can be applied.
         $table = new xmldb_table('booking_cert_cond');
@@ -5256,6 +5254,13 @@ function xmldb_booking_upgrade($oldversion) {
         $table->add_index('component', XMLDB_INDEX_NOTUNIQUE, ['component']);
         $table->add_index('area', XMLDB_INDEX_NOTUNIQUE, ['area']);
 
-        upgrade_mod_savepoint(true, 2026032000, 'booking');
+        // Conditionally launch create table for booking_cert_cond_item.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        upgrade_mod_savepoint(true, 2026032600, 'booking');
     }
+
+    return true;
 }
